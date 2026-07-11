@@ -19,9 +19,10 @@ echo
 # Labels
 # ---------------------------------------------------------------------------
 echo "== Labels =="
+existing_labels="$(gh label list --repo "$REPO" --limit 200 --json name -q '.[].name')"
 create_label () {
   local name="$1" color="$2" desc="$3"
-  if gh label list --repo "$REPO" --limit 200 | grep -qiE "^${name}\b"; then
+  if grep -qxF "$name" <<< "$existing_labels"; then
     echo "  = label exists: $name"
   else
     gh label create "$name" --repo "$REPO" --color "$color" --description "$desc" >/dev/null
